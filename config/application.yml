@@ -1,0 +1,48 @@
+---
+server:
+  port: 9090
+---
+spring:
+  profiles: DEV
+  application:
+    name: gateway-client
+eureka:
+  client:
+    enabled: true
+    fetch-registry: true
+  serviceUrl:
+    defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    homePageUrl: http://localhost:9090
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.name}:${spring.profiles.active}:${spring.application.instance_id:${random.value}}
+zuul:
+  sensitive-headers: Cookie,Set-Cookie
+  ignored-services: '*'
+  routes:
+    UserAssignment:
+      path: /userassignment/**
+      serviceId: UserAssignment
+   
+      
+management:
+  security: 
+    enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    beans:
+      enabled: false
+    shutdown:
+      enabled: true
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 120000
+ribbon:
+  ReadTimeout: 100000
+  ConnectTimeout: 100000   
